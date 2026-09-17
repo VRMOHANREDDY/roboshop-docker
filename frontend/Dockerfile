@@ -1,6 +1,7 @@
-FROM nginx:1.24.0                    #taken nginx
-RUN rm -rf /usr/share/nginx/html/*   # removed default code
-RUN rm -rf /etc/nginx/nginx.conf     # placed the code here
-RUN rm -rf /etc/nginx/conf.d/default.conf  # remove default.conf in conf.d remove
+FROM nginx:1.24.0                    
+RUN rm -rf /usr/share/nginx/html/*   
+RUN rm -rf /etc/nginx/nginx.conf     
+RUN rm -rf /etc/nginx/conf.d/default.conf  
 COPY static/ /usr/share/nginx/html/
 COPY nginx.conf /etc/nginx/nginx.conf
+
