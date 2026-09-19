@@ -1,24 +1,25 @@
-FROM node:20.20.2-alpine3.22 AS builder
-# creates /app and set the directory to /app
+FROM maven:3.9.16 AS builder
 WORKDIR /app
-COPY package.json .
-COPY *.js .
-# node_modules
-RUN npm install 
+COPY pom.xml .
+COPY src ./src
+RUN mvn clean package && \
+    mv target/shipping-1.0.jar shipping.jar 
 
-FROM node:20.20.2-alpine3.22
-WORKDIR /app
+# Java is portable not OS dependent, application built in windows can run in Linux
+FROM eclipse-temurin:17-jre-alpine
 EXPOSE 8080
+WORKDIR /app
 RUN addgroup -S roboshop && adduser -S -G roboshop roboshop && \
     chown -R roboshop:roboshop /app
-COPY --from=builder /app /app
+COPY --from=builder /app/shipping.jar .
 USER roboshop
-CMD ["node", "server.js"]
+CMD ["java", "-jar", "shipping.jar"]
 
-# FROM node:20
+# FROM maven:3.9.16 
 # WORKDIR /app
-# COPY package.json .
-# COPY *.js .
-# RUN npm install
+# COPY pom.xml .
+# COPY src ./src
+# RUN mvn clean package 
+# RUN mv target/shipping-1.0.jar shipping.jar 
 # EXPOSE 8080
-# CMD ["node", "server.js"]
+# CMD ["java", "-jar", "shipping.jar"]
